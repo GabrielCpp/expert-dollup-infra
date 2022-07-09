@@ -1,0 +1,9 @@
+config:
+  expert-dollup-pulumi:mongoAltasOrgId: 61e6e7806e26a05e7c1cbd95
+  expert-dollup-pulumi:serviceImage: hello-world
+  gcp:project: predykt-v2
+  gcp:region: us-west-2
+  mongodbatlas:privateKey:
+    secure: AAABADpivvZD9Rqa+Kj9v4rdrMDBnFooM7JnFvqXfZHoY9icM04ewrA/HLk1/EuOmnr+2cM6y7D+rWmxipLsBM9IRsE=
+  mongodbatlas:publicKey:
+    secure: AAABAFWsuj3Js5S7XPP780jeN5QlTgoREq0MJMpf2b7wvjbr2JxvTg==

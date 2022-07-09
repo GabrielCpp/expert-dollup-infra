@@ -1,0 +1,13 @@
+{
+    "name": "expert-dollup-pulumi",
+    "devDependencies": {
+        "@types/node": "^14"
+    },
+    "dependencies": {
+        "@pulumi/auth0": "^2.9.0",
+        "@pulumi/gcp": "^6.0.0",
+        "@pulumi/mongodbatlas": "^3.3.0",
+        "@pulumi/pulumi": "^3.0.0",
+        "@pulumi/random": "^4.8.0"
+    }
+}
