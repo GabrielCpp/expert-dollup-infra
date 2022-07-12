@@ -1,8 +1,13 @@
 config:
+  auth0:client_id:
+    secure: AAABACa+cJYB+a+5ovU0zKMs03nxED0n/9neIC4uF8xc05Z39irKSjzLGnK/opNuEvRGuzwR8/A4PwR7z3GxkA==
+  auth0:client_secret:
+    secure: AAABAJAHdf1BA7rY760jN8xaWFusg3EAzmNQ132vxQlJ5gkm9LY7eDJeQ63atWlU2DjaST9TE8hr8SVwuisbW0flxuleJPuWC0tneOVSbBJC14n45bPP9dyUpB4bRGil
+  auth0:domain: dev-id3ta63u.us.auth0.com
   expert-dollup-pulumi:mongoAltasOrgId: 61e6e7806e26a05e7c1cbd95
   expert-dollup-pulumi:serviceImage: hello-world
   gcp:project: predykt-v2
-  gcp:region: us-west-2
+  gcp:region: us-central1
   mongodbatlas:privateKey:
     secure: AAABADpivvZD9Rqa+Kj9v4rdrMDBnFooM7JnFvqXfZHoY9icM04ewrA/HLk1/EuOmnr+2cM6y7D+rWmxipLsBM9IRsE=
   mongodbatlas:publicKey:
