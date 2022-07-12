@@ -1,7 +1,8 @@
 {
     "name": "expert-dollup-pulumi",
     "devDependencies": {
-        "@types/node": "^14"
+        "@types/node": "^14",
+        "prettier": "^2.7.1"
     },
     "dependencies": {
         "@pulumi/auth0": "^2.9.0",
