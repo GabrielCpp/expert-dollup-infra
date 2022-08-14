@@ -1,8 +1,6 @@
 import * as mongodbatlas from "@pulumi/mongodbatlas";
-import * as pulumi from "@pulumi/pulumi";
 import * as random from "@pulumi/random";
-
-const config = new pulumi.Config();
+import { config } from "../configs";
 
 export const project = new mongodbatlas.Project("expert-dollup", {
   orgId: config.require("mongoAltasOrgId"),

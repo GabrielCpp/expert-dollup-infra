@@ -6,7 +6,8 @@ import {
   migrationUserAuthDbConnectionString,
   migrationUserExpertDollupDbConnectionString,
 } from "./secrets";
-import { enableIam } from '../iam'
+import { enableIam } from "../iam";
+import { cloudBuildLogsBucket } from "../build";
 
 export const expertDollupImageRepository = new gcp.artifactregistry.Repository(
   "my-repo",
@@ -17,13 +18,6 @@ export const expertDollupImageRepository = new gcp.artifactregistry.Repository(
     repositoryId: "expert-dollup",
   }
 );
-
-const logsBucket = new gcp.storage.Bucket("build-logs-bucket", {
-  forceDestroy: true,
-  storageClass: "REGIONAL",
-  location: location,
-  uniformBucketLevelAccess: true,
-});
 
 const project = gcp.organizations.getProject({});
 
@@ -65,7 +59,7 @@ const artifactRegistryServiceAgent =
 export const storageAdmin = new gcp.storage.BucketIAMBinding(
   "expert-dollup-cloud-build-service-account-log-bucket",
   {
-    bucket: logsBucket.name,
+    bucket: cloudBuildLogsBucket.name,
     members: [
       pulumi.interpolate`serviceAccount:${cloudbuildServiceAccount.email}`,
     ],
@@ -107,7 +101,7 @@ export const service_account_trigger = new gcp.cloudbuild.Trigger(
     filename: "cloudbuild.yaml",
     serviceAccount: cloudbuildServiceAccount.id,
     substitutions: {
-      _LOGS_BUCKET_NAME: logsBucket.name,
+      _LOGS_BUCKET_NAME: cloudBuildLogsBucket.name,
     },
   },
   {

@@ -6,9 +6,9 @@ import {
   createSecretAccessor,
   jwtPublicKey,
 } from "./secrets";
-import { project, location } from "../configs";
-import { enableIam } from '../iam'
- 
+import { project, location, config } from "../configs";
+import { enableIam } from "../iam";
+
 export const enableCloudRun = new gcp.projects.Service("EnableCloudRun", {
   service: "run.googleapis.com",
 });
@@ -62,7 +62,6 @@ export const cloudRunServiceAccountJwtPublicKey = createSecretAccessor(
   jwtPublicKey
 );
 
-const config = new pulumi.Config();
 export const expertDollupService = new gcp.cloudrun.Service(
   "expert-dollup-service",
   {
