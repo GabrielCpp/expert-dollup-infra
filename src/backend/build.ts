@@ -6,8 +6,11 @@ import {
   migrationUserAuthDbConnectionString,
   migrationUserExpertDollupDbConnectionString,
 } from "./secrets";
-import { enableIam } from "../iam";
-import { cloudBuildLogsBucket } from "../build";
+
+import {
+  cloudBuildLogsBucket,
+  expertDollupCloudBuildServiceAccount,
+} from "../build";
 
 export const expertDollupImageRepository = new gcp.artifactregistry.Repository(
   "my-repo",
@@ -21,16 +24,10 @@ export const expertDollupImageRepository = new gcp.artifactregistry.Repository(
 
 const project = gcp.organizations.getProject({});
 
-export const cloudbuildServiceAccount = new gcp.serviceaccount.Account(
-  "expert-dollup-cloud-build-service-account",
-  { accountId: "expert-dollup-cloud-build" },
-  { dependsOn: [enableIam] }
-);
-
 export const actAs = new gcp.projects.IAMMember("actAs", {
   project: project.then((project) => project.projectId || ""),
   role: "roles/iam.serviceAccountUser",
-  member: pulumi.interpolate`serviceAccount:${cloudbuildServiceAccount.email}`,
+  member: pulumi.interpolate`serviceAccount:${expertDollupCloudBuildServiceAccount.email}`,
 });
 
 export const containerRegistryServiceAgent = new gcp.projects.IAMMember(
@@ -38,7 +35,7 @@ export const containerRegistryServiceAgent = new gcp.projects.IAMMember(
   {
     project: project.then((project) => project.projectId || ""),
     role: "roles/containerregistry.ServiceAgent",
-    member: pulumi.interpolate`serviceAccount:${cloudbuildServiceAccount.email}`,
+    member: pulumi.interpolate`serviceAccount:${expertDollupCloudBuildServiceAccount.email}`,
   }
 );
 
@@ -51,7 +48,7 @@ const artifactRegistryServiceAgent =
       repository: expertDollupImageRepository.name,
       role: "roles/artifactregistry.repoAdmin",
       members: [
-        pulumi.interpolate`serviceAccount:${cloudbuildServiceAccount.email}`,
+        pulumi.interpolate`serviceAccount:${expertDollupCloudBuildServiceAccount.email}`,
       ],
     }
   );
@@ -61,7 +58,7 @@ export const storageAdmin = new gcp.storage.BucketIAMBinding(
   {
     bucket: cloudBuildLogsBucket.name,
     members: [
-      pulumi.interpolate`serviceAccount:${cloudbuildServiceAccount.email}`,
+      pulumi.interpolate`serviceAccount:${expertDollupCloudBuildServiceAccount.email}`,
     ],
     role: "roles/storage.admin",
   }
@@ -70,19 +67,19 @@ export const storageAdmin = new gcp.storage.BucketIAMBinding(
 export const logsWriter = new gcp.projects.IAMMember("logsWriter", {
   project: project.then((project) => project.projectId || ""),
   role: "roles/logging.logWriter",
-  member: pulumi.interpolate`serviceAccount:${cloudbuildServiceAccount.email}`,
+  member: pulumi.interpolate`serviceAccount:${expertDollupCloudBuildServiceAccount.email}`,
 });
 
 export const cloudBuildMigrationUserAuthDbConnectionString =
   createSecretAccessor(
     "cloud-build-migration-user-auth-db-connection-string",
-    cloudbuildServiceAccount,
+    expertDollupCloudBuildServiceAccount,
     migrationUserAuthDbConnectionString
   );
 export const cloudBuildMigrationUserExpertDollupDbConnectionString =
   createSecretAccessor(
     "cloud-build-migration-user-expert-dollup-db-connection-string",
-    cloudbuildServiceAccount,
+    expertDollupCloudBuildServiceAccount,
     migrationUserExpertDollupDbConnectionString
   );
 
@@ -99,7 +96,7 @@ export const service_account_trigger = new gcp.cloudbuild.Trigger(
       },
     },
     filename: "cloudbuild.yaml",
-    serviceAccount: cloudbuildServiceAccount.id,
+    serviceAccount: expertDollupCloudBuildServiceAccount.id,
     substitutions: {
       _LOGS_BUCKET_NAME: cloudBuildLogsBucket.name,
     },

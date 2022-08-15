@@ -6,6 +6,11 @@ export const buildedWebAppBucket = new gcp.storage.Bucket("webapp-content", {
   storageClass: "REGIONAL",
   location,
   uniformBucketLevelAccess: true,
+  publicAccessPrevention: "inherited",
+  website: {
+    mainPageSuffix: "index.html",
+    notFoundPage: "index.html",
+  },
 });
 
 export const webappBucket = new gcp.compute.BackendBucket(
@@ -13,6 +18,7 @@ export const webappBucket = new gcp.compute.BackendBucket(
   {
     description: "Serve the webapp",
     bucketName: buildedWebAppBucket.name,
-    enableCdn: true,
-  }
+    enableCdn: false,
+  },
+  { dependsOn: [buildedWebAppBucket] }
 );

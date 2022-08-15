@@ -133,3 +133,13 @@ export const expertDollupService = new gcp.cloudrun.Service(
     ],
   }
 );
+
+export const expertDollupServicePublicAccess = new gcp.cloudrun.IamMember(
+  "expert-dollup-service-public-access",
+  {
+    service: expertDollupService.name,
+    location,
+    role: "roles/run.invoker",
+    member: "allUsers",
+  }
+);

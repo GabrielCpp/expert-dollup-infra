@@ -7,7 +7,7 @@ export const enableCompute = new gcp.projects.Service("EnableCompute", {
   service: "compute.googleapis.com",
 });
 
-const ipaddress = new gcp.compute.GlobalAddress(
+export const ipaddress = new gcp.compute.GlobalAddress(
   "expert-dollup-webapp-ipaddress",
   {
     addressType: "EXTERNAL",
@@ -49,7 +49,7 @@ const https_paths = new gcp.compute.URLMap(
       {
         hosts: [host],
         pathMatcher: "expert-dollup",
-      }
+      },
     ],
     pathMatchers: [
       {
@@ -63,12 +63,12 @@ const https_paths = new gcp.compute.URLMap(
           {
             paths: ["/graphql"],
             service: service.id,
-          }
+          },
         ],
-      }
+      },
     ],
   },
-  { dependsOn: [enableCompute] }
+  { dependsOn: [enableCompute, webappBucket] }
 );
 
 const certificate = new gcp.compute.ManagedSslCertificate(
