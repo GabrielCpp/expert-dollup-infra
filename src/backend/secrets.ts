@@ -9,7 +9,7 @@ import {
   authDbMigrationUser,
   expertDollupMigrationUser,
 } from "./mongo-atlas";
-import { auth0Frontend } from "../auth0";
+import { auth0Frontend, getPublicKeyFromCert } from "../auth0";
 
 export function createSecretAccessor(
   name: string,
@@ -212,7 +212,7 @@ export const jwtPublicKeyLatest = new gcp.secretmanager.SecretVersion(
   {
     secret: jwtPublicKey.id,
     secretData: auth0Frontend.signingKeys.apply((k) =>
-      Buffer.from(k[0].cert).toString("base64")
+      Buffer.from(getPublicKeyFromCert(k[0].cert)).toString("base64")
     ),
   },
   { dependsOn: [jwtPublicKey, auth0Frontend] }

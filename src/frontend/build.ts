@@ -8,7 +8,36 @@ import {
 } from "../build";
 import { buildedWebAppBucket } from "./webapp-bucket";
 import { audience, auth0Frontend, redirectUri } from "../auth0";
-import { auth0Domain } from "../configs";
+import { auth0Domain, location } from "../configs";
+
+const webappPackagesBundleCacheBucket = new gcp.storage.Bucket("webapp-packages-bundle-cache-bucket", {
+  forceDestroy: true,
+  storageClass: "REGIONAL",
+  location,
+  uniformBucketLevelAccess: true,
+  lifecycleRules: [
+    {
+      action: {
+        type: 'Delete'
+      },
+      condition: {
+        age: 5
+      }
+    }
+  ]
+});
+
+const webappPackagesBundleCacheBucketAdmin = new gcp.storage.BucketIAMBinding(
+  "webapp-packages-bundle-cache-bucket-admin",
+  {
+    bucket: webappPackagesBundleCacheBucket.name,
+    members: [
+      pulumi.interpolate`serviceAccount:${expertDollupWebappCloudBuildServiceAccount.email}`,
+    ],
+    role: "roles/storage.admin",
+  },
+  { dependsOn: [enableIam, webappPackagesBundleCacheBucket] }
+);
 
 const project = gcp.organizations.getProject({});
 
@@ -55,6 +84,7 @@ export const service_account_trigger = new gcp.cloudbuild.Trigger(
     serviceAccount: expertDollupWebappCloudBuildServiceAccount.id,
     substitutions: {
       _LOGS_BUCKET_NAME: cloudBuildLogsBucket.name,
+      _PACKAGES_BUNDLE_BUCKET_NAME: webappPackagesBundleCacheBucket.name,
       _WEBAPP_BUCKET_NAME: buildedWebAppBucket.name,
       _REACT_APP_AUTH0_DOMAIN: auth0Domain,
       _REACT_APP_AUTH0_CLIENT_ID: auth0Frontend.clientId,
@@ -63,6 +93,6 @@ export const service_account_trigger = new gcp.cloudbuild.Trigger(
     },
   },
   {
-    dependsOn: [actAs, logsWriter, cloudBuildLogsBucketStoprageAdmin],
+    dependsOn: [actAs, logsWriter, cloudBuildLogsBucketStoprageAdmin, webappPackagesBundleCacheBucketAdmin],
   }
 );

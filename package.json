@@ -9,6 +9,7 @@
         "@pulumi/gcp": "^6.0.0",
         "@pulumi/mongodbatlas": "^3.3.0",
         "@pulumi/pulumi": "^3.0.0",
-        "@pulumi/random": "^4.8.0"
+        "@pulumi/random": "^4.8.0",
+        "crypto": "^1.0.1"
     }
 }
