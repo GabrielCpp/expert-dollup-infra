@@ -6,15 +6,18 @@ export function getPublicKeyFromCert(cert: string) {
   return createPublicKey(cert).export({type:'spki', format:'pem'})
 }
 
-export const audience = `https://${host}`;
 export const redirectUri = `https://${host}/dashboard`;
 export const auth0Frontend = new auth0.Client("expert-dollup-auth0-frontend", {
   appType: "spa",
-  allowedLogoutUrls: [`https://${host}/logout`],
+  allowedLogoutUrls: [`https://${host}`],
   allowedOrigins: [`https://${host}`],
   callbacks: [redirectUri],
   initiateLoginUri: `https://${host}/login`,
   isFirstParty: true,
+  tokenEndpointAuthMethod: 'none',
+  grantTypes: [
+    'implicit', 'authorization_code', 'refresh_token'
+  ],
   jwtConfiguration: {
     alg: "RS256",
     lifetimeInSeconds: 84600,

@@ -161,7 +161,7 @@ export const appUserAuthDb = new mongodbatlas.DatabaseUser(
     roles: [
       {
         databaseName: "auth",
-        roleName: "dbAdmin",
+        roleName: "readWrite",
       },
     ],
     scopes: [
