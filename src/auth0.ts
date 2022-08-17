@@ -6,7 +6,7 @@ export function getPublicKeyFromCert(cert: string) {
   return createPublicKey(cert).export({type:'spki', format:'pem'})
 }
 
-export const redirectUri = `https://${host}/dashboard`;
+export const redirectUri = `https://${host}`;
 export const auth0Frontend = new auth0.Client("expert-dollup-auth0-frontend", {
   appType: "spa",
   allowedLogoutUrls: [`https://${host}`],

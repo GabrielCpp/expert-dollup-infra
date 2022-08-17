@@ -8,7 +8,7 @@ export const location = gcp.config.region || "us-central1";
 export const project = gcp.config.project || "predykt-v2";
 export const host = "gabcpp.biz";
 export const issuer = "https://dev-id3ta63u.us.auth0.com/";
-export const audience = [
+export const audiences = [
   "https://dev-id3ta63u.us.auth0.com/api/v2/",
   "https://dev-id3ta63u.us.auth0.com/userinfo",
 ];

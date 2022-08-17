@@ -7,8 +7,8 @@ import {
   expertDollupWebappCloudBuildServiceAccount,
 } from "../build";
 import { buildedWebAppBucket } from "./webapp-bucket";
-import { audience, auth0Frontend, redirectUri } from "../auth0";
-import { auth0Domain, location } from "../configs";
+import { auth0Frontend, redirectUri } from "../auth0";
+import { auth0Domain, location, audiences } from "../configs";
 
 const webappPackagesBundleCacheBucket = new gcp.storage.Bucket("webapp-packages-bundle-cache-bucket", {
   forceDestroy: true,
@@ -88,7 +88,7 @@ export const service_account_trigger = new gcp.cloudbuild.Trigger(
       _WEBAPP_BUCKET_NAME: buildedWebAppBucket.name,
       _REACT_APP_AUTH0_DOMAIN: auth0Domain,
       _REACT_APP_AUTH0_CLIENT_ID: auth0Frontend.clientId,
-      _REACT_APP_AUTH0_AUDIENCE: audience,
+      _REACT_APP_AUTH0_AUDIENCE: audiences[0],
       _REACT_APP_AUTH0_REDIRECT_URI: redirectUri,
     },
   },

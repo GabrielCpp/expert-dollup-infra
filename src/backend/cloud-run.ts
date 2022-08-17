@@ -6,7 +6,7 @@ import {
   createSecretAccessor,
   jwtPublicKey,
 } from "./secrets";
-import { project, location, config, audience, issuer } from "../configs";
+import { project, location, config, audiences, issuer } from "../configs";
 import { enableIam } from "../iam";
 
 export const enableCloudRun = new gcp.projects.Service("EnableCloudRun", {
@@ -141,7 +141,7 @@ export const expertDollupService = new gcp.cloudrun.Service(
               },
               {
                 name: "JWT_AUDIENCES",
-                value: JSON.stringify(audience),
+                value: JSON.stringify(audiences),
               },
               {
                 name: "JWT_ISSUER",
