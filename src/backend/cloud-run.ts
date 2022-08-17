@@ -13,6 +13,17 @@ export const enableCloudRun = new gcp.projects.Service("EnableCloudRun", {
   service: "run.googleapis.com",
 });
 
+export const expertDollupBucket = new gcp.storage.Bucket(
+  "expert-dollup-bucket",
+  {
+    forceDestroy: true,
+    storageClass: "REGIONAL",
+    location,
+    uniformBucketLevelAccess: true,
+  }
+);
+
+
 export const cloudRunServiceAccount = new gcp.serviceaccount.Account(
   "cloud-run-service-account",
   {
@@ -31,6 +42,25 @@ export const cloudRunServiceAccountMember = new gcp.serviceaccount.IAMMember(
     member: "user:gabcpp17@gmail.com",
   }
 );
+
+export const expertDollupBucketReadWrite =
+  new gcp.storage.BucketIAMBinding(
+    "expert-dollup-bucket-read-write",
+    {
+      bucket: expertDollupBucket.name,
+      members: [
+        pulumi.interpolate`serviceAccount:${cloudRunServiceAccount.email}`
+      ],
+      role: "roles/storage.objectAdmin",
+    },
+    {
+      dependsOn: [
+        expertDollupBucket,
+        cloudRunServiceAccount,
+      ],
+    }
+  );
+
 
 export const cloudRunServiceAccountCloudRunAgent =
   new gcp.serviceaccount.IAMMember(
@@ -117,6 +147,10 @@ export const expertDollupService = new gcp.cloudrun.Service(
                 name: "JWT_ISSUER",
                 value: issuer
               },
+              {
+                name: "APP_BUCKET_NAME",
+                value: expertDollupBucket.name
+              }
             ],
           },
         ],
@@ -138,6 +172,7 @@ export const expertDollupService = new gcp.cloudrun.Service(
       cloudRunServiceAccountAppUserExpertDollupDbConnectionString,
       cloudRunServiceAccountAppUserAuthDbConnectionString,
       cloudRunServiceAccountJwtPublicKey,
+      expertDollupBucketReadWrite
     ],
   }
 );
