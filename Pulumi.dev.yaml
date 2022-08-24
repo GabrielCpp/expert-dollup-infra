@@ -5,7 +5,7 @@ config:
     secure: AAABAJAHdf1BA7rY760jN8xaWFusg3EAzmNQ132vxQlJ5gkm9LY7eDJeQ63atWlU2DjaST9TE8hr8SVwuisbW0flxuleJPuWC0tneOVSbBJC14n45bPP9dyUpB4bRGil
   auth0:domain: dev-id3ta63u.us.auth0.com
   expert-dollup-pulumi:mongoAltasOrgId: 61e6e7806e26a05e7c1cbd95
-  expert-dollup-pulumi:serviceImage: us-central1-docker.pkg.dev/predykt-v2/expert-dollup/expert-dollup:e1794cfbfab52ce45499925dd795415fc89b5507
+  expert-dollup-pulumi:serviceImage: us-central1-docker.pkg.dev/predykt-v2/expert-dollup/expert-dollup:latest
   gcp:project: predykt-v2
   gcp:region: us-central1
   mongodbatlas:privateKey:

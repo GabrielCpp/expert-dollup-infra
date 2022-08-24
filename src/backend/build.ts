@@ -11,6 +11,7 @@ import {
   cloudBuildLogsBucket,
   expertDollupCloudBuildServiceAccount,
 } from "../build";
+import { expertDollupService } from "./cloud-run";
 
 export const expertDollupImageRepository = new gcp.artifactregistry.Repository(
   "my-repo",
@@ -99,6 +100,8 @@ export const service_account_trigger = new gcp.cloudbuild.Trigger(
     serviceAccount: expertDollupCloudBuildServiceAccount.id,
     substitutions: {
       _LOGS_BUCKET_NAME: cloudBuildLogsBucket.name,
+      _SERVICE_NAME: expertDollupService.name,
+      _REGION: location
     },
   },
   {
@@ -110,6 +113,7 @@ export const service_account_trigger = new gcp.cloudbuild.Trigger(
       artifactRegistryServiceAgent,
       cloudBuildMigrationUserAuthDbConnectionString,
       cloudBuildMigrationUserExpertDollupDbConnectionString,
+      expertDollupService
     ],
   }
 );
