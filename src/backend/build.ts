@@ -65,6 +65,13 @@ export const storageAdmin = new gcp.storage.BucketIAMBinding(
   }
 );
 
+export const cloudRunAdmin = new gcp.cloudrun.IamMember("expert-dollup-cloud-build-deploy-cloud-run", {
+  location,
+  service: expertDollupService.name,
+  member: pulumi.interpolate`serviceAccount:${expertDollupCloudBuildServiceAccount.email}`,
+  role: "roles/run.admin",
+})
+
 export const logsWriter = new gcp.projects.IAMMember("logsWriter", {
   project: project.then((project) => project.projectId || ""),
   role: "roles/logging.logWriter",
@@ -113,7 +120,8 @@ export const service_account_trigger = new gcp.cloudbuild.Trigger(
       artifactRegistryServiceAgent,
       cloudBuildMigrationUserAuthDbConnectionString,
       cloudBuildMigrationUserExpertDollupDbConnectionString,
-      expertDollupService
+      expertDollupService,
+      cloudRunAdmin
     ],
   }
 );
