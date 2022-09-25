@@ -1,5 +1,5 @@
 
 import './src/auth0'
-import './src/iam'
+import './src/services'
 import './src/backend'
 import './src/frontend'

@@ -11,22 +11,6 @@ import {
 } from "./mongo-atlas";
 import { auth0Frontend, getPublicKeyFromCert } from "../auth0";
 
-export function createSecretAccessor(
-  name: string,
-  account: gcp.serviceaccount.Account,
-  secret: gcp.secretmanager.Secret
-) {
-  return new gcp.secretmanager.SecretIamBinding(
-    `${name}-secret-accessor-iam-binding`,
-    {
-      role: "roles/secretmanager.secretAccessor",
-      project: secret.project,
-      secretId: secret.id,
-      members: [pulumi.interpolate`serviceAccount:${account.email}`],
-    },
-    { dependsOn: [account, secret] }
-  );
-}
 
 function makeDbConnectionString(
   connectionStrings: pulumi.UnwrappedArray<mongodbatlas.types.output.ClusterConnectionString>,

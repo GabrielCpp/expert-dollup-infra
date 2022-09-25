@@ -3,15 +3,12 @@ import * as gcp from "@pulumi/gcp";
 import {
   appUserAuthDbConnectionString,
   appUserExpertDollupDbConnectionString,
-  createSecretAccessor,
   jwtPublicKey,
 } from "./secrets";
+import { CloudRunApp } from "../shared";
 import { project, location, config, audiences, issuer } from "../configs";
-import { enableIam } from "../iam";
+import { enableCloudRun, enableIam } from "../services";
 
-export const enableCloudRun = new gcp.projects.Service("EnableCloudRun", {
-  service: "run.googleapis.com",
-});
 
 export const expertDollupBucket = new gcp.storage.Bucket(
   "expert-dollup-bucket",
@@ -24,165 +21,68 @@ export const expertDollupBucket = new gcp.storage.Bucket(
 );
 
 
-export const cloudRunServiceAccount = new gcp.serviceaccount.Account(
-  "cloud-run-service-account",
+export const cloudRunApp = new CloudRunApp(
+  "export-dollup-app",
   {
-    accountId: "expertdollupcloudrun",
-    displayName: "Cloud run service account",
+    location,
     project,
+    account: {
+      accountId: "expertdollupcloudrunv2",
+      displayName: "Cloud run service account",
+    },
+    run: {
+      public: true,
+      serviceImage: config.require("serviceImage"),
+      secrets: [
+        {
+          secret: appUserExpertDollupDbConnectionString,
+          name: "EXPERT_DOLLUP_DB_URL",
+          key: "latest",
+        },
+        {
+          secret: appUserAuthDbConnectionString,
+          name: "AUTH_DB_URL",
+          key: "latest",
+        },
+        {
+          secret: jwtPublicKey,
+          name: "JWT_PUBLIC_KEY",
+          key: "latest",
+        },
+      ],
+      envs: [
+        {
+          name: "FASTAPI_ENV",
+          value: "production",
+        },
+        {
+          name: "JWT_AUDIENCES",
+          value: JSON.stringify(audiences),
+        },
+        {
+          name: "JWT_ISSUER",
+          value: issuer
+        },
+        {
+          name: "APP_BUCKET_NAME",
+          value: expertDollupBucket.name
+        }
+      ]
+    },
   },
-  { dependsOn: [enableCloudRun, enableIam] }
-);
-
-export const cloudRunServiceAccountMember = new gcp.serviceaccount.IAMMember(
-  "cloud-run-service-account-member",
   {
-    serviceAccountId: cloudRunServiceAccount.name,
-    role: "roles/iam.serviceAccountUser",
-    member: "user:gabcpp17@gmail.com",
+    dependsOn: [enableCloudRun, enableIam, expertDollupBucket],
   }
 );
 
-export const expertDollupBucketReadWrite =
-  new gcp.storage.BucketIAMBinding(
-    "expert-dollup-bucket-read-write",
-    {
-      bucket: expertDollupBucket.name,
-      members: [
-        pulumi.interpolate`serviceAccount:${cloudRunServiceAccount.email}`
-      ],
-      role: "roles/storage.objectAdmin",
-    },
-    {
-      dependsOn: [
-        expertDollupBucket,
-        cloudRunServiceAccount,
-      ],
-    }
-  );
-
-
-export const cloudRunServiceAccountCloudRunAgent =
-  new gcp.serviceaccount.IAMMember(
-    "cloud-run-service-account-cloud-run-agent",
-    {
-      serviceAccountId: cloudRunServiceAccount.name,
-      role: "roles/run.serviceAgent",
-      member: pulumi.interpolate`serviceAccount:${cloudRunServiceAccount.email}`,
-    }
-  );
-
-export const cloudRunServiceAccountAppUserExpertDollupDbConnectionString =
-  createSecretAccessor(
-    "cloud-run-service-account-app-user-expert-dollup-db-connection-string",
-    cloudRunServiceAccount,
-    appUserExpertDollupDbConnectionString
-  );
-
-export const cloudRunServiceAccountAppUserAuthDbConnectionString =
-  createSecretAccessor(
-    "cloud-run-service-account-app-user-auth-db-connection-string",
-    cloudRunServiceAccount,
-    appUserAuthDbConnectionString
-  );
-
-export const cloudRunServiceAccountJwtPublicKey = createSecretAccessor(
-  "cloud-run-service-account-jwt-public-key",
-  cloudRunServiceAccount,
-  jwtPublicKey
-);
-
-export const expertDollupService = new gcp.cloudrun.Service(
-  "expert-dollup-service",
+export const expertDollupBucketReadWrite = new gcp.storage.BucketIAMMember(
+  "expert-dollup-bucket-read-write",
   {
-    location,
-    template: {
-      spec: {
-        serviceAccountName: cloudRunServiceAccount.email,
-        containers: [
-          {
-            image: config.require("serviceImage"),
-            ports: [
-              {
-                containerPort: 8000,
-              },
-            ],
-            envs: [
-              {
-                name: "EXPERT_DOLLUP_DB_URL",
-                valueFrom: {
-                  secretKeyRef: {
-                    name: appUserExpertDollupDbConnectionString.secretId,
-                    key: "latest",
-                  },
-                },
-              },
-              {
-                name: "AUTH_DB_URL",
-                valueFrom: {
-                  secretKeyRef: {
-                    name: appUserAuthDbConnectionString.secretId,
-                    key: "latest",
-                  },
-                },
-              },
-              {
-                name: "JWT_PUBLIC_KEY",
-                valueFrom: {
-                  secretKeyRef: {
-                    name: jwtPublicKey.secretId,
-                    key: "latest",
-                  },
-                },
-              },
-              {
-                name: "FASTAPI_ENV",
-                value: "production",
-              },
-              {
-                name: "JWT_AUDIENCES",
-                value: JSON.stringify(audiences),
-              },
-              {
-                name: "JWT_ISSUER",
-                value: issuer
-              },
-              {
-                name: "APP_BUCKET_NAME",
-                value: expertDollupBucket.name
-              }
-            ],
-          },
-        ],
-      },
-    },
-    traffics: [
-      {
-        percent: 100,
-        latestRevision: true,
-      },
-    ],
-    autogenerateRevisionName: true,
+    bucket: expertDollupBucket.name,
+    member: pulumi.interpolate`serviceAccount:${cloudRunApp.serviceAccount.email}`,
+    role: "roles/storage.objectAdmin",
   },
   {
-    dependsOn: [
-      enableCloudRun,
-      cloudRunServiceAccountMember,
-      cloudRunServiceAccountCloudRunAgent,
-      cloudRunServiceAccountAppUserExpertDollupDbConnectionString,
-      cloudRunServiceAccountAppUserAuthDbConnectionString,
-      cloudRunServiceAccountJwtPublicKey,
-      expertDollupBucketReadWrite
-    ],
-  }
-);
-
-export const expertDollupServicePublicAccess = new gcp.cloudrun.IamMember(
-  "expert-dollup-service-public-access",
-  {
-    service: expertDollupService.name,
-    location,
-    role: "roles/run.invoker",
-    member: "allUsers",
+    dependsOn: [expertDollupBucket, cloudRunApp],
   }
 );
