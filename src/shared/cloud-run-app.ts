@@ -11,7 +11,9 @@ export interface CloudRunAppArgs {
   };
   run: {
     public: boolean;
-    serviceImage: string;
+    serviceImage: string | pulumi.Output<string>;
+    domain?: string;
+    port?: number
     secrets: {
       name: string;
       secret: gcp.secretmanager.Secret;
@@ -30,6 +32,7 @@ export class CloudRunApp extends pulumi.ComponentResource {
   readonly secretIamBindings: gcp.secretmanager.SecretIamMember[];
   readonly service: gcp.cloudrun.Service;
   readonly publicAccess?: gcp.cloudrun.IamMember;
+  readonly defaultDomainMapping?: gcp.cloudrun.DomainMapping
 
   constructor(
     name: string,
@@ -84,7 +87,7 @@ export class CloudRunApp extends pulumi.ComponentResource {
     );
 
     this.service = new gcp.cloudrun.Service(
-      "expert-dollup-service",
+      `${name}-cloud-run-service`,
       {
         location,
         template: {
@@ -95,7 +98,7 @@ export class CloudRunApp extends pulumi.ComponentResource {
                 image: run.serviceImage,
                 ports: [
                   {
-                    containerPort: 8000,
+                    containerPort: run.port || 8000,
                   },
                 ],
                 envs: [
@@ -130,7 +133,7 @@ export class CloudRunApp extends pulumi.ComponentResource {
 
     if (run.public) {
       this.publicAccess = new gcp.cloudrun.IamMember(
-        "expert-dollup-service-public-access",
+        `${name}-cloud-run-service-public-access`,
         {
           service: this.service.name,
           location,
@@ -139,6 +142,18 @@ export class CloudRunApp extends pulumi.ComponentResource {
         },
         defaultResourceOptions
       );
+    }
+    
+    if(run.domain) {
+      this.defaultDomainMapping = new gcp.cloudrun.DomainMapping(`${name}-cloud-run-service-default-domain-mapping`, {
+        location: "us-central1",
+        metadata: {
+            namespace: project,
+        },
+        spec: {
+            routeName: this.service.name,
+        },
+    });
     }
   }
 }

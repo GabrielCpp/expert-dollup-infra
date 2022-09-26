@@ -6,6 +6,7 @@ config:
   auth0:domain: dev-id3ta63u.us.auth0.com
   expert-dollup-pulumi:mongoAltasOrgId: 61e6e7806e26a05e7c1cbd95
   expert-dollup-pulumi:serviceImage: us-central1-docker.pkg.dev/predykt-v2/expert-dollup/expert-dollup:latest
+  expert-dollup-pulumi:expertDollupWebappImage: us-central1-docker.pkg.dev/predykt-v2/expert-dollup-webapp/expert-dollup-webapp:latest
   gcp:project: predykt-v2
   gcp:region: us-central1
   mongodbatlas:privateKey:

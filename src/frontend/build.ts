@@ -8,6 +8,7 @@ import { auth0Frontend, redirectUri } from "../auth0";
 import { auth0Domain, location, audiences, project } from "../configs";
 import { CloudBuildCi } from "../shared";
 import { cloudRunApp } from '../backend/cloud-run'
+import { cloudRunApp as webapp } from './cloud-run'
 
 export const expertDollupWebappImageRepository = new gcp.artifactregistry.Repository(
   "expert-dollup-webapp-repository",
@@ -39,6 +40,7 @@ export const expertDollupWebappCi = new CloudBuildCi(`expert-dollup-webapp-ci`, 
     _REACT_APP_AUTH0_CLIENT_ID: auth0Frontend.clientId,
     _REACT_APP_AUTH0_AUDIENCE: audiences[0],
     _REACT_APP_AUTH0_REDIRECT_URI: redirectUri,
+    _SERVICE_NAME: webapp.service.name,
   },
   ci: {
     name: "expert-dollop-webapp",
