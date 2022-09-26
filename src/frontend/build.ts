@@ -4,7 +4,6 @@ import { cloudBuildLogsBucket } from "../build";
 import { auth0Frontend, redirectUri } from "../auth0";
 import { auth0Domain, location, audiences, project } from "../configs";
 import { CloudBuildCi } from "../shared";
-import { cloudRunApp } from "../backend/cloud-run";
 import { cloudRunApp as webapp } from "./cloud-run";
 
 export const expertDollupWebappImageRepository =
@@ -42,7 +41,6 @@ export const expertDollupWebappCi = new CloudBuildCi(
     substitutions: {
       _LOGS_BUCKET_NAME: cloudBuildLogsBucket.name,
       _REPOSITORY_NAME: expertDollupWebappImageRepository.name,
-      _BACKEND_URL: cloudRunApp.service.statuses.apply((s) => s[0]?.url || ""),
       _REACT_APP_AUTH0_DOMAIN: auth0Domain,
       _REACT_APP_AUTH0_CLIENT_ID: auth0Frontend.clientId,
       _REACT_APP_AUTH0_AUDIENCE: audiences[0],
@@ -58,5 +56,5 @@ export const expertDollupWebappCi = new CloudBuildCi(
       },
     },
   },
-  { dependsOn: [enableIam, cloudRunApp, defaultProject, enableCloudBuild] }
+  { dependsOn: [enableIam, defaultProject, enableCloudBuild] }
 );
