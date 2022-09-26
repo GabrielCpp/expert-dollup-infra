@@ -1,0 +1,27 @@
+{
+  "hosting": {
+    "rewrites": [
+      {
+        "source": "/api",
+        "run": {
+          "serviceId": "export-dollup-app-cloud-run-service-d2af4d3",
+          "region": "us-central1"
+        }
+      },
+      {
+        "source": "/graphql",
+        "run": {
+          "serviceId": "export-dollup-app-cloud-run-service-d2af4d3",
+          "region": "us-central1"
+        }
+      },
+      {
+        "source": "**",
+        "run": {
+          "serviceId": "expert-dollup-webapp-cloud-run-service-c031bf9",
+          "region": "us-central1"
+        }
+      }
+    ]
+  }
+}

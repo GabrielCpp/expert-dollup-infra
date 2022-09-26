@@ -1,0 +1,17 @@
+{
+  "name": "firebase-hosting",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "init": "GOOGLE_APPLICATION_CREDENTIALS=\"$(pwd)/predyktv2-946cbbc9748c.json\" node index.mjs",
+    "firebase:deploy": "firebase deploy --only hosting --project predyktv2"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "firebase-admin": "^11.0.1",
+    "node-fetch": "^3.2.10"
+  }
+}
