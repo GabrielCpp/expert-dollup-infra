@@ -15,12 +15,12 @@ import { enableSecretManager } from "../services";
 function makeDbConnectionString(
   connectionStrings: pulumi.UnwrappedArray<mongodbatlas.types.output.ClusterConnectionString>,
   username: string,
-  password: string,
+  password?: string,
   database?: string
 ): string {
   const url = new URL(connectionStrings[0].standardSrv);
   url.username = username;
-  url.password = password;
+  url.password = password || "";
   if (database === undefined) {
     url.pathname = "/";
   } else {
@@ -58,14 +58,14 @@ export const migrationUserExpertDollupDbConnectionStringLatest =
         .all([
           cluster.connectionStrings,
           expertDollupMigrationUser.username,
-          appDbPassword.result,
+          expertDollupMigrationUser.password,
           expertDollupMigrationUser.roles,
         ])
         .apply(([connectionStrings, username, password, roles]) =>
           makeDbConnectionString(
             connectionStrings,
             username,
-            password || "",
+            password,
             roles.find((r) => r.databaseName !== undefined)?.databaseName
           )
         ),
@@ -103,7 +103,7 @@ export const migrationUserAuthDbConnectionStringLatest =
           makeDbConnectionString(
             connectionStrings,
             username,
-            password || "",
+            password,
             roles.find((r) => r.databaseName !== undefined)?.databaseName
           )
         ),
@@ -135,14 +135,14 @@ export const appUserExpertDollupDbConnectionStringLatest =
         .all([
           cluster.connectionStrings,
           expertDollupAppUser.username,
-          appDbPassword.result,
+          expertDollupAppUser.password,
           expertDollupAppUser.roles,
         ])
         .apply(([connectionStrings, username, password, roles]) =>
           makeDbConnectionString(
             connectionStrings,
             username,
-            password || "",
+            password,
             roles.find((r) => r.databaseName !== undefined)?.databaseName
           )
         ),

@@ -4,9 +4,9 @@ config:
   auth0:client_secret:
     secure: AAABAMvhjDFL3hvCm5WGaBbesab0W78Cb2TOdrw06OcVauMsKF4iu8qqZslBdhU1vrVFukkxeyvUjoVtvMmW0ibBpGjuhbQzOGWZrqwl6XW80dhfemaLazhKPvGD0zYg
   auth0:domain: dev-id3ta63u.us.auth0.com
-  expert-dollup-pulumi:expertDollupWebappImage: ""
+  expert-dollup-pulumi:expertDollupWebappImage: "us-central1-docker.pkg.dev/predyktv2/expert-dollup-webapp/expert-dollup-webapp:latest"
   expert-dollup-pulumi:mongoAltasOrgId: 61e6e7806e26a05e7c1cbd95
-  expert-dollup-pulumi:serviceImage: ""
+  expert-dollup-pulumi:serviceImage: "us-central1-docker.pkg.dev/predyktv2/expert-dollup/expert-dollup:latest"
   gcp:project: predyktv2
   gcp:region: us-central1
   mongodbatlas:privateKey:
