@@ -34,7 +34,7 @@ export const expertDollupCi = new CloudBuildCi(
           member,
           service: cloudRunApp.service.name,
           role: "roles/run.admin",
-        }),
+        }, opts),
         createSecretAccessor(
           `${name}-migration-user-auth-db-connection-string`,
           member,

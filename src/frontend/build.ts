@@ -27,7 +27,14 @@ export const expertDollupWebappCi = new CloudBuildCi(`expert-dollup-webapp-ci`, 
   account: {
     accountId: "expertdollupwebappcloudbuild",
     displayName: 'Expert dollup webapp service account',
-    addMembers: (name, member, opts) => []
+    addMembers: (name, member, opts) => [
+      new gcp.cloudrun.IamMember(`${name}-deploy-cloud-run`, {
+        location,
+        member,
+        service: webapp.service.name,
+        role: "roles/run.admin",
+      }, opts),
+    ]
   },
   repositories: [
     expertDollupWebappImageRepository
@@ -41,6 +48,7 @@ export const expertDollupWebappCi = new CloudBuildCi(`expert-dollup-webapp-ci`, 
     _REACT_APP_AUTH0_AUDIENCE: audiences[0],
     _REACT_APP_AUTH0_REDIRECT_URI: redirectUri,
     _SERVICE_NAME: webapp.service.name,
+    _REGION: location,
   },
   ci: {
     name: "expert-dollop-webapp",

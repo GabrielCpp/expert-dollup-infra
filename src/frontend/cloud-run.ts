@@ -33,7 +33,7 @@ export const cloudRunApp = new CloudRunApp(
     },
     run: {
       public: true,
-      port: 5678,
+      port: 8080,
       serviceImage:
         config.require("expertDollupWebappImage") || image.imageName,
       secrets: [],
