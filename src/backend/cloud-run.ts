@@ -7,7 +7,7 @@ import {
 } from "./secrets";
 import { CloudRunApp } from "../shared";
 import { project, location, config, audiences, issuer } from "../configs";
-import { enableCloudRun, enableIam } from "../services";
+import { enableCloudRun, enableIam, echoServer } from "../services";
 
 
 export const expertDollupBucket = new gcp.storage.Bucket(
@@ -32,7 +32,7 @@ export const cloudRunApp = new CloudRunApp(
     },
     run: {
       public: true,
-      serviceImage: config.require("serviceImage"),
+      serviceImage: config.require("serviceImage") || echoServer.imageName,
       secrets: [
         {
           secret: appUserExpertDollupDbConnectionString,
@@ -71,7 +71,7 @@ export const cloudRunApp = new CloudRunApp(
     },
   },
   {
-    dependsOn: [enableCloudRun, enableIam, expertDollupBucket],
+    dependsOn: [enableCloudRun, enableIam, expertDollupBucket, echoServer],
   }
 );
 

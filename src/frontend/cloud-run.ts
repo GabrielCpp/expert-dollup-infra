@@ -1,26 +1,6 @@
 import { CloudRunApp } from "../shared";
 import { project, location, config } from "../configs";
-import { enableCloudRun, enableIam } from "../services";
-import * as docker from "@pulumi/docker";
-import * as gcp from "@pulumi/gcp";
-import * as pulumi from "@pulumi/pulumi";
-
-export const commonRepository = new gcp.artifactregistry.Repository(
-  "common-repository",
-  {
-    description: "Shared images",
-    format: "DOCKER",
-    location,
-    repositoryId: "expert-dollup-common",
-  }
-);
-
-const image = new docker.Image("echo-server", {
-  imageName: pulumi.interpolate`us-central1-docker.pkg.dev/${gcp.config.project}/${commonRepository.repositoryId}/echo-server:latest`,
-  build: {
-    context: ".",
-  },
-});
+import { enableCloudRun, enableIam, echoServer } from "../services";
 
 export const cloudRunApp = new CloudRunApp(
   "expert-dollup-webapp",
@@ -35,12 +15,12 @@ export const cloudRunApp = new CloudRunApp(
       public: true,
       port: 8080,
       serviceImage:
-        config.require("expertDollupWebappImage") || image.imageName,
+        config.require("expertDollupWebappImage") || echoServer.imageName,
       secrets: [],
       envs: [],
     },
   },
   {
-    dependsOn: [enableCloudRun, enableIam, image],
+    dependsOn: [enableCloudRun, enableIam, echoServer],
   }
 );

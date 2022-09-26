@@ -2,7 +2,7 @@ import * as gcp from "@pulumi/gcp";
 import { location, project } from "../configs";
 import { cloudBuildLogsBucket } from "../build";
 import { CloudBuildCi, createSecretAccessor } from "../shared";
-import { enableIam } from "../services";
+import { enableIam, defaultProject, enableArtifactRegistry, enableCloudBuild } from "../services";
 import { cloudRunApp } from "./cloud-run";
 import {
   migrationUserAuthDbConnectionString,
@@ -16,7 +16,8 @@ export const expertDollupImageRepository = new gcp.artifactregistry.Repository(
     format: "DOCKER",
     location,
     repositoryId: "expert-dollup",
-  }
+  },
+  { dependsOn: [ enableArtifactRegistry ] }
 );
 
 export const expertDollupCi = new CloudBuildCi(
@@ -62,5 +63,5 @@ export const expertDollupCi = new CloudBuildCi(
       },
     }
   },
-  { dependsOn: [cloudRunApp, enableIam] }
+  { dependsOn: [cloudRunApp, enableIam, defaultProject, enableCloudBuild] }
 );

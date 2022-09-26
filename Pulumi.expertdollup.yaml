@@ -1,0 +1,15 @@
+config:
+  auth0:client_id:
+    secure: AAABAJkgqAoB7Kb4jcskcFtFRgOG4qTxn7xOddRu3+iSCDoYFxgAlj9DckQ/VGA/sSRVtZvJ0vH55LZE7D9R4w==
+  auth0:client_secret:
+    secure: AAABAMvhjDFL3hvCm5WGaBbesab0W78Cb2TOdrw06OcVauMsKF4iu8qqZslBdhU1vrVFukkxeyvUjoVtvMmW0ibBpGjuhbQzOGWZrqwl6XW80dhfemaLazhKPvGD0zYg
+  auth0:domain: dev-id3ta63u.us.auth0.com
+  expert-dollup-pulumi:expertDollupWebappImage: ""
+  expert-dollup-pulumi:mongoAltasOrgId: 61e6e7806e26a05e7c1cbd95
+  expert-dollup-pulumi:serviceImage: ""
+  gcp:project: predyktv2
+  gcp:region: us-central1
+  mongodbatlas:privateKey:
+    secure: AAABAFQAN4FApkM0XNMXf8F29UJAK1d5KXqVw3R+kgu86YgGH6mjG5pKMbDPTeR2xvZe0uEnVz4OKwUMh4MwlN7+vOk=
+  mongodbatlas:publicKey:
+    secure: AAABACFoVXAZV789x33OFtKoYKGRVUKGR82Ne6wfcqoXV0fkRw90qA==

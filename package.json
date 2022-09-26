@@ -1,8 +1,7 @@
 {
   "name": "expert-dollup-pulumi",
   "scripts": {
-    "configure-docker": "gcloud auth configure-docker us-central1-docker.pkg.dev",
-    "firebase:deploy": "firebase deploy --only hosting --project predykt-v2"
+    "configure-docker": "gcloud auth configure-docker us-central1-docker.pkg.dev"
   },
   "devDependencies": {
     "@types/node": "^14",

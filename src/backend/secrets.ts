@@ -10,7 +10,7 @@ import {
   expertDollupMigrationUser,
 } from "./mongo-atlas";
 import { auth0Frontend, getPublicKeyFromCert } from "../auth0";
-
+import { enableSecretManager } from "../services";
 
 function makeDbConnectionString(
   connectionStrings: pulumi.UnwrappedArray<mongodbatlas.types.output.ClusterConnectionString>,
@@ -45,7 +45,8 @@ export const migrationUserExpertDollupDbConnectionString =
         automatic: true,
       },
       secretId: "migration-user-expert-dollup-db",
-    }
+    },
+    { dependsOn: [enableSecretManager] }
   );
 
 export const migrationUserExpertDollupDbConnectionStringLatest =
@@ -82,7 +83,8 @@ export const migrationUserAuthDbConnectionString = new gcp.secretmanager.Secret(
       automatic: true,
     },
     secretId: "migration-user-auth-db",
-  }
+  },
+  { dependsOn: [enableSecretManager] }
 );
 
 export const migrationUserAuthDbConnectionStringLatest =
@@ -110,15 +112,19 @@ export const migrationUserAuthDbConnectionStringLatest =
   );
 
 export const appUserExpertDollupDbConnectionString =
-  new gcp.secretmanager.Secret("app-user-expert-dollup-db-connection-string", {
-    labels: {
-      label: "connection-string-app-mongo-db",
+  new gcp.secretmanager.Secret(
+    "app-user-expert-dollup-db-connection-string",
+    {
+      labels: {
+        label: "connection-string-app-mongo-db",
+      },
+      replication: {
+        automatic: true,
+      },
+      secretId: "app-user-expert-dollup-db",
     },
-    replication: {
-      automatic: true,
-    },
-    secretId: "app-user-expert-dollup-db",
-  });
+    { dependsOn: [enableSecretManager] }
+  );
 
 export const appUserExpertDollupDbConnectionStringLatest =
   new gcp.secretmanager.SecretVersion(
@@ -154,7 +160,8 @@ export const appUserAuthDbConnectionString = new gcp.secretmanager.Secret(
       automatic: true,
     },
     secretId: "app-user-auth-db",
-  }
+  },
+  { dependsOn: [enableSecretManager] }
 );
 
 export const appUserAuthDbConnectionStringLatest =
@@ -181,15 +188,19 @@ export const appUserAuthDbConnectionStringLatest =
     { dependsOn: [appUserAuthDb, cluster] }
   );
 
-export const jwtPublicKey = new gcp.secretmanager.Secret("jwt-public-key", {
-  labels: {
-    label: "jwt-public-key",
+export const jwtPublicKey = new gcp.secretmanager.Secret(
+  "jwt-public-key",
+  {
+    labels: {
+      label: "jwt-public-key",
+    },
+    replication: {
+      automatic: true,
+    },
+    secretId: "jwt-public-key",
   },
-  replication: {
-    automatic: true,
-  },
-  secretId: "jwt-public-key",
-});
+  { dependsOn: [enableSecretManager] }
+);
 
 export const jwtPublicKeyLatest = new gcp.secretmanager.SecretVersion(
   "jwt-public-key-latest",
