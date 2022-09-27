@@ -87,12 +87,17 @@ export class FirebaseHosting extends pulumi.ComponentResource {
       { ...defaultResourceOptions, dependsOn: [...this.members] }
     );
 
-    const enableFirebase = new gcp.projects.Service(
+    new gcp.projects.Service(
       "enable-firebase",
       {
         service: "firebase.googleapis.com",
-      }
+      },
+      defaultResourceOptions
     );
+
+    new gcp.projects.Service("enable-firebase", {
+      service: "firebase.googleapis.com",
+    });
 
     /*
      new gcp.firebase.Project(

@@ -1,13 +1,8 @@
 {
   "hosting": {
+    "public": "build",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
-      {
-        "source": "/api",
-        "run": {
-          "serviceId": "export-dollup-app-cloud-run-service-d2af4d3",
-          "region": "us-central1"
-        }
-      },
       {
         "source": "/graphql",
         "run": {
@@ -16,11 +11,15 @@
         }
       },
       {
-        "source": "**",
+        "source": "/api/**",
         "run": {
-          "serviceId": "expert-dollup-webapp-cloud-run-service-c031bf9",
+          "serviceId": "export-dollup-app-cloud-run-service-d2af4d3",
           "region": "us-central1"
         }
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
       }
     ]
   }

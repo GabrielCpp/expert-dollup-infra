@@ -78,8 +78,12 @@ export const expertDollupMigrationUser = new mongodbatlas.DatabaseUser(
     projectId: project.id,
     roles: [
       {
-        databaseName: "admin",
-        roleName: "readWriteAnyDatabase",
+        databaseName: "expert_dollup",
+        roleName: "dbAdmin",
+      },
+      {
+        databaseName: "expert_dollup",
+        roleName: "readWrite",
       },
     ],
     scopes: [
@@ -115,8 +119,12 @@ export const authDbMigrationUser = new mongodbatlas.DatabaseUser(
     projectId: project.id,
     roles: [
       {
-        databaseName: "admin",
-        roleName: "readWriteAnyDatabase",
+        databaseName: "expert_dollup",
+        roleName: "dbAdmin",
+      },
+      {
+        databaseName: "expert_dollup",
+        roleName: "readWrite",
       },
     ],
     scopes: [

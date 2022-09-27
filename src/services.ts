@@ -65,5 +65,14 @@ export const echoServer = new docker.Image("echo-server", {
   imageName: pulumi.interpolate`us-central1-docker.pkg.dev/${gcp.config.project}/${commonRepository.repositoryId}/echo-server:latest`,
   build: {
     context: ".",
+    dockerfile: 'dockers/echo-server.dockerfile'
+  },
+});
+
+export const fireBaseDeploy = new docker.Image("firebase-deploy", {
+  imageName: pulumi.interpolate`us-central1-docker.pkg.dev/${gcp.config.project}/${commonRepository.repositoryId}/firebase-deploy:latest`,
+  build: {
+    context: ".",
+    dockerfile: 'dockers/firebase-deploy.dockerfile'
   },
 });
