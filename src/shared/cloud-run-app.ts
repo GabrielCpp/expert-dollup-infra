@@ -4,10 +4,15 @@ import { createSecretAccessor } from "./secrets";
 
 export interface CloudRunAppArgs {
   location: string;
-  project: string;
+  project: string | pulumi.Output<string>;
   account: {
     accountId: string;
     displayName: string;
+    addMembers: (
+      name: string,
+      member: pulumi.Output<string>,
+      opts: pulumi.ResourceOptions
+    ) => pulumi.CustomResource[];
   };
   run: {
     public: boolean;
@@ -33,6 +38,7 @@ export class CloudRunApp extends pulumi.ComponentResource {
   readonly service: gcp.cloudrun.Service;
   readonly publicAccess?: gcp.cloudrun.IamMember;
   readonly defaultDomainMapping?: gcp.cloudrun.DomainMapping
+  readonly customResource: pulumi.CustomResource[];
 
   constructor(
     name: string,
@@ -75,8 +81,15 @@ export class CloudRunApp extends pulumi.ComponentResource {
         },
         defaultResourceOptions
       ),
+
     ];
 
+    this.customResource = account.addMembers(
+      name,
+      pulumi.interpolate`serviceAccount:${this.serviceAccount.email}`,
+      defaultResourceOptions
+    )
+    
     this.secretIamBindings = run.secrets.map((binding) =>
       createSecretAccessor(
         `${name}-secret-binding-${binding.name.toLowerCase()}`,

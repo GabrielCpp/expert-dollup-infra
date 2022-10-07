@@ -29,6 +29,7 @@ export const cloudRunApp = new CloudRunApp(
     account: {
       accountId: "expertdollupcloudrunv2",
       displayName: "Cloud run service account",
+      addMembers: (name, member, opts) => []
     },
     run: {
       public: true,
